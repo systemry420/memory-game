@@ -11,27 +11,43 @@
 <body>
 
     <div class="container">
+        <div class="modal">
+            <div id="modal-body"></div>
+            <button class="btn" id="play">Play Again?</button>
+        </div>
+
         <header>
             <h1>Matching Game</h1>
         </header>
 
-        <section class="score-panel">
-        	<ul class="stars">
-        		<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
-        	</ul>
+        <!-- restyling score-panel -->
+        <div class="score-panel">
+            <div class="column">
+                <ul class="stars">
+                    <li><i class="fa fa-star"></i></li>
+                    <li><i class="fa fa-star"></i></li>
+                    <li><i class="fa fa-star"></i></li>
+                    <li><i class="fa fa-star"></i></li>
+                    <li><i class="fa fa-star"></i></li>
+                </ul>
+                <div id="moves">0</div> Moves
+            </div>
 
-        	<span id="moves">0</span> Moves
+            <div class="column">
+                <div id="restart">
+                    <i class="fa fa-repeat"></i>
+                </div>
+            </div>
 
-            <div id="restart">
-        		<i class="fa fa-repeat"></i>
-        	</div>
-        </section>
+            <div class="column">
+                <strong>Duration - </strong>
+                <div id="duration">0</div> (sec)
+            </div>
+        </div>
 
         <ul class="deck"></ul>
     </div>
 
-    <script src="js/app.js"></script>
+    <script defer src="js/app.js"></script>
 </body>
 </html>

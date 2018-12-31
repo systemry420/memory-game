@@ -28,6 +28,28 @@ body {
     flex-direction: column;
 }
 
+.modal {
+    width: 560px;
+    background-color: #fff;
+    text-align: center;
+    z-index: 1;
+    padding: 2% 8%;
+    border-radius: 3%;
+    position: absolute;
+    margin: auto;
+    display: none;
+}
+
+.btn {
+    background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
+    color: #1a1a1b;
+    border: 0;
+    padding: 8px 30px;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 h1 {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
@@ -38,10 +60,10 @@ h1 {
  */
 
 .deck {
-    width: 660px;
-    min-height: 680px;
+    width: 560px;
+    min-height: 560px;
     background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
-    padding: 32px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
     display: flex;
@@ -52,8 +74,8 @@ h1 {
 }
 
 .deck .card {
-    height: 125px;
-    width: 125px;
+    height: 115px;
+    width: 115px;
     background: #2e3d49;
     font-size: 0;
     color: #ffffff;
@@ -127,17 +149,15 @@ h1 {
     }
 }
 /*
- * Styles for the Score Panel
+ * Styles for the Score Panel (restyled)
  */
 
 .score-panel {
-    text-align: left;
-    width: 345px;
-    margin-bottom: 10px;
+    width: 560px;
+    margin: 10px 0;
 }
 
 .score-panel .stars {
-    margin: 0;
     padding: 0;
     display: inline-block;
     margin: 0 5px 0 0;
@@ -148,7 +168,18 @@ h1 {
     display: inline-block;
 }
 
+.score-panel .column {
+    width: calc(100%/3);
+    float: left;
+    text-align: center;
+}
+
 .score-panel #restart {
-    float: right;
+    font-size: 1.2em;
     cursor: pointer;
+}
+
+.column #duration, .column #moves {
+    display: inline-block;
+    width: 25px;
 }
