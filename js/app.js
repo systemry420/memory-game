@@ -13,6 +13,7 @@ let stars = document.querySelectorAll('.stars li');
 let s = 4;
 let click = 0;
 let x;
+let arrScores = [];
 
 // restart game
 restart.addEventListener('click', startGame);
@@ -180,6 +181,10 @@ function gameOver() {
         <h3>Congratulations! You won!</h3>
         <p>Your time: <strong>${time}</strong> seconds</p>
         <p>With <strong>${move}</strong> moves and <strong>${++s}</strong> star(s).</p>`;
+
+        // only save the score if it has 3+ stars
+        if(s >= 3)
+            saveScores(time, move, s);
     }
     else if(s < 0){
         mod = `
@@ -188,9 +193,48 @@ function gameOver() {
         <p>Your time: <strong>${time}</strong> seconds</p>
         <p>With <strong>${move}</strong> moves and <strong>${++s}</strong> star(s).</p>`;
     }
+
+    // fetch latest 3 high saved scores
+    if(JSON.parse(localStorage.getItem('scores') != null)){
+        mod += '<hr><h3>Recent Highest Scores</h3>';
+        let arr = JSON.parse(localStorage.getItem('scores'));
+        for (let i = 0; i < arr.length; i++) {
+            if(i == 3)
+                break;
+            const a = arr.pop();
+            mod += `<p>Stars: ${a.star} - Moves: ${a.move} - Time: ${a.time} </p>`;
+        };
+    }
+
     let  modalBody = document.querySelector('#modal-body');
     modalBody.innerHTML = mod;
     deck.style.opacity = '0.6';
     modal.style.display = 'block';
     deck.removeEventListener('click', flip);
+}
+
+function saveScores(t, m, s){
+    let score = {
+        time: t,
+        move: m,
+        star: s
+    };
+
+    // test if scores is already set
+    if(localStorage.getItem('scores') === null){
+        arrScores = [];
+        arrScores.push(score);
+        localStorage.setItem('scores', JSON.stringify(arrScores));
+    }
+    else{
+        try{
+            let res = localStorage.getItem('scores');
+            arrScores = JSON.parse(res);
+        } catch (error){
+            alert(error);
+        }
+
+        arrScores.push(score);
+        localStorage.setItem('scores', JSON.stringify(arrScores));
+    }
 }
