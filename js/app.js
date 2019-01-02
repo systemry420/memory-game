@@ -1,38 +1,41 @@
 // dceclare variables
-let deck = document.querySelector(".deck");
-let opened = [];
-let matches = [];
+let deck = document.querySelector('.deck');
 let moves = document.querySelector('#moves');
-let move, wrongMoves = 0;
-let restart = document.querySelector("#restart");
-let time = 0;
-let duration = document.querySelector("#duration");
+let restart = document.querySelector('#restart');
+let duration = document.querySelector('#duration');
 let play = document.querySelector('#play');
 let modal = document.querySelector('.modal');
 let stars = document.querySelectorAll('.stars li');
-let s = 4;
+let opened = [];    // keep track of opened cards
+let matches = [];       //keep track of matched cards
+let arrScores = [];     //array to hold scores
+let move, wrongMoves = 0;       //numebr of moves, and wrong moves
+let time = 0;
+let s = 4;      // control stars
 let click = 0;
 let x;
-let arrScores = [];
+let countdown;      //countdown feature
 
 // restart game
 restart.addEventListener('click', startGame);
 
+// listen to the whole .deck element
 deck.addEventListener('click', flip);
 
 /*
  * Create a list that holds all of your cards
  */
 
-let cards = ['fa-diamond', 'fa-diamond',
-             'fa-paper-plane-o', 'fa-paper-plane-o',
-             'fa-anchor', 'fa-anchor',
-             'fa-bolt', 'fa-bolt',
-             'fa-cube', 'fa-cube',
-             'fa-leaf', 'fa-leaf',
-             'fa-bicycle', 'fa-bicycle',
-             'fa-bomb', 'fa-bomb'
-            ];
+let cards = [
+    'fa-diamond', 'fa-diamond',
+    'fa-paper-plane-o', 'fa-paper-plane-o',
+    'fa-anchor', 'fa-anchor',
+    'fa-bolt', 'fa-bolt',
+    'fa-cube', 'fa-cube',
+    'fa-leaf', 'fa-leaf',
+    'fa-bicycle', 'fa-bicycle',
+    'fa-bomb', 'fa-bomb'
+];
 
 /*
 * Display the cards on the page
@@ -43,13 +46,13 @@ let cards = ['fa-diamond', 'fa-diamond',
 
 
 function startGame() {
-    // reset variables
+    // reset variables and style
     clearInterval(x);
     click = time = move = wrongMoves = 0;
     matches = [];
     opened = [];
     s = 4;
-    deck.innerHTML = "";
+    deck.innerHTML = '';
     moves.innerHTML = move;
     duration.innerHTML = 0;
     deck.style.opacity = '1';
@@ -57,7 +60,6 @@ function startGame() {
     stars.forEach(st => {
         st.style.color = '#000';
     });
-
     deck.addEventListener('click', flip);
 
     // shuffle and generate cards
@@ -65,9 +67,29 @@ function startGame() {
     cards.forEach(function(card){
         return generatCards(card);
     });
+
+    // show all cards for 5 seconds to let the user memorize :)
+    let p = document.querySelector('.countdown span');
+    p.parentNode.style.visibility = 'visible';
+    let cd = document.querySelectorAll('.card');
+    let a = 5;
+    cd.forEach(c => {
+        c.classList.add('show', 'open');
+    });
+    countdown = setInterval(() => {
+        p.textContent = --a;
+    }, 1000);
+    setTimeout(() => {
+        cd.forEach(c => {
+            c.classList.remove('show', 'open');
+        });
+        clearInterval(countdown);
+        p.parentNode.style.visibility = 'hidden';
+    }, 5000);
 }
 
 function generatCards(card) {
+    // set the data-icon attribute
     let att = card.slice(3);
     let cardTemp = `<li class="card" data-icon="${att}"><i class="fa ${card}"></i></li>`;
     deck.innerHTML += cardTemp;
@@ -90,6 +112,7 @@ function shuffle(array) {
     return array;
 }
 
+// play again button
 play.addEventListener('click', function(){
     startGame();
     modal.style.display = 'none';
@@ -109,24 +132,41 @@ play.addEventListener('click', function(){
 function flip(e) {
     let element = e.target;
     ++click;
+
+    // get the clicked node
     let node = e.target.nodeName.toLowerCase();
-    if(click == 1){
-        x = setInterval(timer, 1000);
-    }
+
+    // if element being clicked is li(card)
     if(node == 'li'){
+        // check if game is launched, and start a timer
+        if(click == 1){
+            x = setInterval(timer, 1000);
+        }
+
+        // track and increase move counter
         moves.innerHTML = ++move;
+
+        // push every clicked element to opened array
         opened.push(element);
         element.classList.add('open', 'show');
+
+        // only two cards to be checked
         if(opened.length == 2){
+
             // check match
             if(checkMatch(opened)){
+                // apply match class
                 opened[0].classList.add('match');
                 opened[1].classList.add('match');
+
+                // push the 2 matched cards
                 matches.push(opened[0]);
                 matches.push(opened[1]);
                 opened = [];
             }
             else{
+                // cards don't match
+                // the criteria of star rating
                 wrongMoves+=2;
                 if(wrongMoves == 16){
                     stars[s--].style.color = '#aaa';
@@ -137,15 +177,17 @@ function flip(e) {
                 else if(wrongMoves == 26){
                     stars[s--].style.color = '#aaa';
                 }
-                else if(wrongMoves == 30){
+                else if(wrongMoves == 28){
                     stars[s--].style.color = '#aaa';
                 }
-                else if(wrongMoves == 34){
+                else if(wrongMoves == 30){
                     stars[s--].style.color = '#aaa';
                     gameOver();
                 }
                 opened[0].classList.add('unmatch');
                 opened[1].classList.add('unmatch');
+
+                // close cards after 1 second
                 setTimeout(() => {
                     opened[0].classList.remove('open', 'show', 'unmatch');
                     opened[1].classList.remove('open', 'show', 'unmatch');
@@ -154,12 +196,15 @@ function flip(e) {
             }
         }
     }
+
+    // if there are 16-matched cards, the game is over
     if(matches.length == 16){
         gameOver();
     }
 }
 
 function checkMatch(arr) {
+    // check the two opened cards using data-icon attribute
     if(arr[0].dataset.icon === arr[1].dataset.icon){
         return true;
     }
@@ -172,26 +217,27 @@ function timer() {
 }
 
 function gameOver() {
-    // show modal
+    // show modal containing data about the game, and any previous high scores
     let mod = '';
     clearInterval(x);
     if(s >= 0 ){
         mod = `
-        <i class="fa fa-rocket" style="color:green; font-size: 40px;"></i>
-        <h3>Congratulations! You won!</h3>
-        <p>Your time: <strong>${time}</strong> seconds</p>
-        <p>With <strong>${move}</strong> moves and <strong>${++s}</strong> star(s).</p>`;
+            <i class="fa fa-rocket" style="color:green; font-size: 40px;"></i>
+            <h3>Congratulations! You won!</h3>
+            <p>Your time: <strong>${time}</strong> seconds</p>
+            <p>With <strong>${move}</strong> moves and <strong>${++s}</strong> star(s).</p>`;
 
         // only save the score if it has 3+ stars
         if(s >= 3)
             saveScores(time, move, s);
     }
     else if(s < 0){
+        // if no stars remained, then you lost
         mod = `
-        <i class="fa fa-rocket" style="color:red; font-size: 40px;"></i>
-        <h3>Bad luck! You loose!</h3>
-        <p>Your time: <strong>${time}</strong> seconds</p>
-        <p>With <strong>${move}</strong> moves and <strong>${++s}</strong> star(s).</p>`;
+            <i class="fa fa-rocket" style="color:red; font-size: 40px;"></i>
+            <h3>Bad luck! You lose all stars!</h3>
+            <p>Your time: <strong>${time}</strong> seconds</p>
+            <p>With <strong>${move}</strong> moves and <strong>${++s}</strong> star(s).</p>`;
     }
 
     // fetch latest 3 high saved scores
@@ -214,6 +260,7 @@ function gameOver() {
 }
 
 function saveScores(t, m, s){
+    // save score as an object
     let score = {
         time: t,
         move: m,
@@ -227,6 +274,7 @@ function saveScores(t, m, s){
         localStorage.setItem('scores', JSON.stringify(arrScores));
     }
     else{
+        // fetch any found scores, push the current score, and re-store the array
         try{
             let res = localStorage.getItem('scores');
             arrScores = JSON.parse(res);
