@@ -213,6 +213,7 @@ h1 {
 
     .modal {
         width: 95%;
+        margin: auto;
     }
 
     .deck .card {
